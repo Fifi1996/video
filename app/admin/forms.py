@@ -1,121 +1,117 @@
 # coding:utf8
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, ValidationError
-from app.models import Admin, Tag
-
-tags = Tag.query.all()
+from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField
+from wtforms.validators import DataRequired, ValidationError, EqualTo
+from app.models import Admin, Tag, Auth, Role
 
 
-# 管理员登陆表单
+# tags = Tag.query.all()
+# auth_list = Auth.query.all()
+# role_list = Role.query.all()
+
+
 class LoginForm(FlaskForm):
+#管理员登陆表单
     account = StringField(
         label="账号",
         validators=[
-            DataRequired("请输入账号")
+            DataRequired("请输入账号！")
         ],
         description="账号",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入账号：",
-            #    "required": "required"
+            "placeholder": "请输入账号！",
+            # "required": "required"
         }
     )
     pwd = PasswordField(
         label="密码",
         validators=[
-            DataRequired("请输入密码")
+            DataRequired("请输入密码！")
         ],
         description="密码",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入密码：",
-            #    "required": "required"
+            "placeholder": "请输入密码！",
+            # "required": "required"
         }
     )
     submit = SubmitField(
         '登录',
         render_kw={
             "class": "btn btn-primary btn-block btn-flat",
-
         }
     )
 
-    # 自定义验证器
-    def validate_acccount(self, field):
+    def validate_account(self, field):
         account = field.data
         admin = Admin.query.filter_by(name=account).count()
         if admin == 0:
-            raise ValidationError("账号不存在!")
+            raise ValidationError("账号不存在！")
 
-
-# 标签表单
+#标签
 class TagForm(FlaskForm):
     name = StringField(
         label="名称",
         validators=[
-            DataRequired("请输入标签!")
+            DataRequired("请输入标签！")
         ],
         description="标签",
         render_kw={
             "class": "form-control",
             "id": "input_name",
-            "placeholder": "请输入标签"
+            "placeholder": "请输入标签名称！"
         }
     )
     submit = SubmitField(
         '编辑',
         render_kw={
-            "class": "btn btn-primary ",
-
+            "class": "btn btn-primary",
         }
     )
 
-
-# 添加电影
+#视频详情
 class MovieForm(FlaskForm):
     title = StringField(
-        label="名称",
+        label="标题",
         validators=[
-            DataRequired("请输入名称!")
+            DataRequired("请输入标题！")
         ],
-        description="名称",
+        description="标题",
         render_kw={
             "class": "form-control",
-            "id": "input_title",
-            "placeholder": "请输入名称"
+            "placeholder": "请输入标题！"
         }
     )
     url = FileField(
         label="文件",
         validators=[
-            DataRequired("请上传文件!")
+            DataRequired("请上传文件！")
         ],
         description="文件",
     )
     info = TextAreaField(
         label="简介",
         validators=[
-            DataRequired("请输入简介!")
+            DataRequired("请输入简介！")
         ],
         description="简介",
         render_kw={
             "class": "form-control",
-            "id": "input_title",
-            "row": 10
+            "rows": 10
         }
     )
     logo = FileField(
         label="封面",
         validators=[
-            DataRequired("请上传封面!")
+            DataRequired("请上传封面！")
         ],
         description="封面",
     )
     star = SelectField(
         label="星级",
         validators=[
-            DataRequired("请选择星级!")
+            DataRequired("请选择星级！")
         ],
         coerce=int,
         choices=[(1, "1星"), (2, "2星"), (3, "3星"), (4, "4星"), (5, "5星")],
@@ -127,10 +123,10 @@ class MovieForm(FlaskForm):
     tag_id = SelectField(
         label="标签",
         validators=[
-            DataRequired("请选择标签!")
+            DataRequired("请选择标签！")
         ],
         coerce=int,
-        choices=[{v.id, v.name} for v in tags],
+        choices=[(v.id, v.name) for v in Tag.query.all()],
         description="标签",
         render_kw={
             "class": "form-control",
@@ -139,73 +135,72 @@ class MovieForm(FlaskForm):
     area = StringField(
         label="地区",
         validators=[
-            DataRequired("请输入地区!")
+            DataRequired("请输入地区！")
         ],
         description="地区",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入地区"
+            "placeholder": "请输入地区！"
         }
     )
     length = StringField(
         label="时长",
         validators=[
-            DataRequired("请输入时长!")
+            DataRequired("请输入时长！")
         ],
         description="时长",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入时长"
+            "placeholder": "请输入时长！"
         }
     )
     release_time = StringField(
-        label="时间",
+        label="上映时间",
         validators=[
-            DataRequired("请输入时间!")
+            DataRequired("请选择上映时间！")
         ],
-        description="时间",
+        description="上映时间",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入时间",
+            "placeholder": "请选择上映时间！",
             "id": "input_release_time"
         }
     )
     submit = SubmitField(
         '编辑',
         render_kw={
-            "class": "btn btn-primary ",
+            "class": "btn btn-primary",
         }
     )
 
-# 添加电影
+
 class PreviewForm(FlaskForm):
-    title= StringField(
+    title = StringField(
         label="预告标题",
         validators=[
-            DataRequired("请输入预告标题!")
+            DataRequired("请输入预告标题！")
         ],
-        description="标签",
+        description="预告标题",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入预告标题"
+            "placeholder": "请输入预告标题！"
         }
     )
     logo = FileField(
         label="预告封面",
         validators=[
-            DataRequired("请上传预告封面!")
+            DataRequired("请上传预告封面！")
         ],
         description="预告封面",
     )
     submit = SubmitField(
         '编辑',
         render_kw={
-            "class": "btn btn-primary ",
-
+            "class": "btn btn-primary",
         }
     )
 
-#修改密码
+
 class PwdForm(FlaskForm):
     old_pwd = PasswordField(
         label="旧密码",
@@ -246,3 +241,116 @@ class PwdForm(FlaskForm):
         if not admin.check_pwd(pwd):
             raise ValidationError("旧密码错误！")
 
+
+class AuthForm(FlaskForm):
+    name = StringField(
+        label="权限名称",
+        validators=[
+            DataRequired("请输入权限名称！")
+        ],
+        description="权限名称",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入权限名称！"
+        }
+    )
+    url = StringField(
+        label="权限地址",
+        validators=[
+            DataRequired("请输入权限地址！")
+        ],
+        description="权限地址",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入权限地址！"
+        }
+    )
+    submit = SubmitField(
+        '编辑',
+        render_kw={
+            "class": "btn btn-primary",
+        }
+    )
+
+
+class RoleForm(FlaskForm):
+    name = StringField(
+        label="角色名称",
+        validators=[
+            DataRequired("请输入角色名称！")
+        ],
+        description="角色名称",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入角色名称！"
+        }
+    )
+    auths = SelectMultipleField(
+        label="权限列表",
+        validators=[
+            DataRequired("请选择权限列表！")
+        ],
+        coerce=int,
+        choices=[(v.id, v.name) for v in Auth.query.all()],
+        description="权限列表",
+        render_kw={
+            "class": "form-control",
+        }
+    )
+    submit = SubmitField(
+        '编辑',
+        render_kw={
+            "class": "btn btn-primary",
+        }
+    )
+
+
+class AdminForm(FlaskForm):
+    name = StringField(
+        label="管理员名称",
+        validators=[
+            DataRequired("请输入管理员名称！")
+        ],
+        description="管理员名称",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入管理员名称！",
+        }
+    )
+    pwd = PasswordField(
+        label="管理员密码",
+        validators=[
+            DataRequired("请输入管理员密码！")
+        ],
+        description="管理员密码",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入管理员密码！",
+        }
+    )
+    repwd = PasswordField(
+        label="管理员重复密码",
+        validators=[
+            DataRequired("请输入管理员重复密码！"),
+            EqualTo('pwd', message="两次密码不一致！")
+        ],
+        description="管理员重复密码",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入管理员重复密码！",
+        }
+    )
+    role_id = SelectField(
+        label="所属角色",
+        coerce=int,
+        choices=[(v.id, v.name) for v in Role.query.all()],
+        render_kw={
+            "class": "form-control",
+        }
+    )
+    submit = SubmitField(
+        '编辑',
+        render_kw={
+            "class": "btn btn-primary",
+        }
+    )
